@@ -1,0 +1,294 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+/* hide from Mac IE5 \*/
+* html #container {
+	height: 1%;
+}
+/* END hide from Mac IE5 */
+
+body {
+	background: #FFF; 
+	text-align: center;
+/*	font-size: 62.5%; */
+	margin: 0;
+	padding: 0;
+}
+
+
+div#main {
+	width: 806px;
+  	margin: auto;
+  	text-align: left;
+  	position: relative;
+}
+
+#imageloc {
+	left: 0px;
+	top: 150px;
+	position: absolute;
+}
+
+#menu {
+	left: 30px;
+	top: 189px;
+	position: absolute;
+}
+
+.menutext {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 12pt;
+	line-height: 18pt;
+}
+
+.youarehere {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration: underline;
+	color: #000;
+}
+
+#nav, #nav ul { /* all lists */
+		padding: 0;
+		margin: 0;
+		width: 160px; 
+		list-style: none;
+		float : left;
+	}
+	
+#nav li { /* all list items */
+		position : relative;
+		float : left;
+		margin-bottom : -1px;
+	}
+	
+#nav li ul { /* second-level lists */
+		position : absolute;
+		left: -999em;
+		margin-left : 70px;
+		margin-top : -20px;
+		border: 0px;
+		display: block;
+		z-index: 10000;
+	}
+	
+#nav li ul a { /* second-level lists */
+		display: block;
+	width: 160px;
+	w\idth: 160px;
+	color: #000;
+	background: #FFF;
+	text-decoration: none;
+	text-align: left;
+  	padding: 3px 0 3px 10px;
+		z-index: 10000;
+}
+	
+#nav li a {
+	display: block;
+	width: 160px;
+	w\idth: 160px;
+	color: #000;
+	text-decoration: none;
+  	padding: 3px 0 3px 0px;
+	}
+	
+#nav li a:hover {
+		color : #000;
+		text-decoration: underline;
+	}
+	
+#nav li:hover ul ul, #nav li:hover ul ul ul, #nav li.sfhover ul ul, #nav li.sfhover ul ul ul {
+		left: -999em;
+	}
+	
+#nav li:hover ul, #nav li li:hover ul, #nav li li li:hover ul, #nav li.sfhover ul, #nav li li.sfhover ul, #nav li li li.sfhover ul { /* lists nested under hovered list items */
+		left: auto;
+	}
+
+#rssloc  {
+	left: 525px;
+	top: 500px;
+	position: absolute;
+}
+
+.feedtext {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 9pt;
+	text-align: left;
+	padding-left: 10px;
+	padding-right: 5px;
+	background: #fbf5df;
+	color: #000;
+	text-decoration: none;
+}
+
+.feeddate  {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 8.5pt;
+	text-align: left;
+}
+
+#botloc  {
+	left: -60px;
+	padding-top: 40px;
+	position: absolute;
+}
+
+#botloccareers  {
+//	left: -60px;
+//	top: 50px;
+	height: 0px;
+//	top:1350px;
+//	position: absolute;
+	position: relative;
+}
+
+#copyloc  {
+	right: 25px;
+	margin-top: -20px;
+	width: 400px;
+	position: absolute;
+}
+
+#contactloc  {
+	right: 25px;
+	top: 132px;
+	width: 400px;
+	position: absolute;
+}
+
+.smalltext {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 8.5pt;
+	color: #cbdae9;
+	text-align: right;
+}
+
+.emailcolor {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 8.5pt;
+	color: #cbdae9;
+	text-decoration: none;
+}
+
+#hometextloc  {
+	left: 60px;
+	top: 500px;
+	position: absolute;
+}
+
+#hometextloc2  {
+	left: 60px;
+	top: 300px;
+	position: absolute;
+}
+
+.header {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 16pt;
+	color: #303474;
+	font-weight: bold;
+	margin-left: 60px;
+}
+
+.subheads {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 13pt;
+	color: #000000;
+}
+
+.subheads2 {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 12pt;
+	color: #303474;
+	font-weight: bold;
+}
+
+.bodycopy {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 11pt;
+	width: 350px;
+	line-height: 12pt;
+	color: #000;
+}
+
+.listcopy {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 11pt;
+	width: 550px;
+	margin-left: 30px;
+	margin-bottom: 3px;
+	line-height: 16pt;
+	color: #000;
+}
+
+.listcopyform {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 11pt;
+	width: 550px;
+	margin-left: 80px;
+	margin-bottom: 10px;
+	line-height: 14pt;
+	color: #000;
+}
+
+.bodycopyform {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 11pt;
+	width: 550px;
+	line-height: 12pt;
+	margin-left: 80px;
+	color: #000;
+}
+
+#mainbody {
+//	left: 60px;
+	top: 547px;
+	position: absolute;
+}
+
+#mainbody4QC {
+//	left: 60px;
+	top: 175px;
+	position: absolute;
+}
+
+#mainbody4F {
+//	left: 60px;
+	top: 240px;
+	position: absolute;
+}
+
+#crheader {
+//	left: 60px;
+//	top: 500px;
+//	position: absolute;
+	position: relative;
+}
+
+#formloc {
+//	left: 75px;
+//	top: 635px;
+//	position: absolute;
+	margin-left: 72px;
+	position: relative;
+}
+
+
+#tablesize {
+	table-layout: fixed;
+	width: 650px;
+	}
+	
+.formtext {
+	font-family: Arial, Verdana, Tahoma, "Lucinda Grande", Geneva, Helvetica, sans-serif;
+	font-size: 11pt;
+	color: #000;
+}
+
+.reqtext {
+	color: red;
+}

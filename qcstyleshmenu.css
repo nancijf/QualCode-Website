@@ -1,0 +1,88 @@
+#menuhoriz {
+	top: 180px; 
+	left: 10px;
+	position: absolute; 
+	z-index: 10000; 
+	}
+
+#navh {
+	float: left;
+	width: 820px;
+	list-style: none;
+	line-height: 1;
+	font-weight: bold;
+	padding: 0;
+	margin: 0 0 1em 0;
+}
+#navh ul {
+	float: left;
+	width: 820px;
+	list-style: none;
+	line-height: 1;
+	background: #323574;
+	font-weight: bold;
+	padding: 0;
+	border: solid #8D93B7;
+	border-width: 1px 0;
+	margin: 0 0 1em 0;
+}
+
+#navh a {
+	display: block;
+	width: auto;
+	color: #EEE;
+	text-decoration: none;
+	padding: 0.25em 2em; 
+}
+
+#navh a.daddy {
+	background: url(rightarrow2.gif) center right no-repeat;
+}
+
+#navh li {
+	float: left;
+	padding: 0;
+	width: auto;
+}
+
+#navh li ul {
+	position: absolute;
+	left: -999em;
+	height: auto;
+	width: 190px;
+	font-weight: normal;
+	border-width: 0.25em;
+	margin: 0;
+}
+
+#navh li li {
+    float: none;
+	padding-right: 0;
+	width: auto;
+}
+
+#navh li ul a {
+	width: auto;
+}
+
+#navh li ul ul {
+	margin: -1.75em 0 0 5em;
+}
+
+#navh li:hover ul ul, #nav li:hover ul ul ul, #nav li.sfhover ul ul, #nav li.sfhover ul ul ul {
+	left: -999em;
+}
+
+#navh li:hover ul, #nav li li:hover ul, #nav li li li:hover ul, #nav li.sfhover ul, #nav li li.sfhover ul, #nav li li li.sfhover ul {
+	left: auto;
+}
+
+#navh li:hover, #nav li.sfhover {
+	background: #8D93B7;
+}
+
+#navbartext li { 
+	text-align: left; 
+	list-style: none;
+	padding: 5px;
+	}

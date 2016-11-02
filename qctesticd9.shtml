@@ -1,0 +1,911 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+	<title>Coding Support and Management</title>
+	<meta name="generator" content="BBEdit 8.7" />
+	<meta name="keywords" content="coding">
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
+	<link rel="stylesheet" type="text/css" href="qcstylesnew2.css" media="screen, projection" />
+	<style type="text/css" media="print">
+		BODY {display:none;visibility:hidden;}
+	</style>
+	<!--<script src="floater.js" type="text/javascript"></script>-->
+	<script type="text/javascript">
+	// Global VARS
+	//
+    var windim = new Array(2);
+    var browser;
+	var validated = true;
+	
+    var jsonobj = {
+        ajaxRequest : function() {
+            var activexmodes=["Msxml2.XMLHTTP", "Microsoft.XMLHTTP"];
+            if (window.ActiveXObject){
+                for (var i=0; i<activexmodes.length; i++) {
+                    try {
+                        return new ActiveXObject(activexmodes[i])
+                    }
+                    catch(e) {
+                    // if not IE then just supress any errors and ignore it
+                    }
+                }
+            }
+            else if (window.XMLHttpRequest) 
+                return new XMLHttpRequest()
+            else
+                return false;
+            },
+            getobj : function(url) {
+                var req = new this.ajaxRequest();
+                var jsonurl = url;
+                req.open("GET", jsonurl, false);
+                req.send("");
+                //return(eval('('+req.responseText+')'));
+                return(req.responseText);
+            }
+    }
+    
+    function getBrowserStr() {
+        return (navigator.userAgent.toLowerCase());
+    }
+
+ 	function getobj(o){
+
+	    if (document.getElementById)
+	        return document.getElementById(o)
+	    else if (document.all)
+	        return document.all.o
+	}
+            
+	function truebody(){
+	  return (!window.opera && document.compatMode && document.compatMode!="BackCompat")? document.documentElement : 	document.body
+	}
+
+    function getwinsize() {
+        
+        if( typeof( window.innerWidth ) == 'number' ) {
+            //Non-IE
+            windim[0] = window.innerWidth;
+            windim[1] = window.innerHeight;
+        } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+            //IE 6+ in 'standards compliant mode'
+            windim[0] = document.documentElement.clientWidth;
+            windim[1] = document.documentElement.clientHeight;
+        } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+            //IE 4 compatible
+            windim[0] = document.body.clientWidth;
+            windim[1] = document.body.clientHeight;
+        }
+    }
+
+    function checkValue(o) {
+        if(o.value != null && o.value != "") {
+			return true;
+        }
+        else {
+			return false;
+        }
+    }
+
+	function checkEmail(e) 
+	{
+		var filter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/;
+		if (!filter.test(e.value)) {
+			e.focus;
+			return false;
+		}
+		return true;
+	}
+	
+    function runit() {
+        window.onresize=function () {
+            getwinsize();
+        }
+        browser = getBrowserStr();        
+    }
+    
+    function getRadioValue(rb) {
+		for (var i = 0; i < rb.length; i++) {
+			if (rb[i].checked) {
+				return rb[i].value;
+			}
+		}
+		return null;
+	}
+
+  	function formError(m) {
+		alert(m);
+	}
+
+    function realSubmit() 
+    {
+      	var idx = 0;
+        var prevElement = "";
+        var elementNames = new Array();
+        var elem = getobj('test').elements;
+
+        var errStr = '';
+
+		if (!checkValue(getobj('fname')) || !checkValue(getobj('phone')))  {
+			errStr += 'Name and Phone Number\n';
+		}
+		if (!checkEmail(getobj('email'))) {
+			errStr += 'Valid Email Address\n';
+		}
+		
+        for(var i = 0; i < elem.length; i++)
+        {
+        	if(!elem[i].name.match(/^Q/)) continue;
+        	elementNames[idx] = elem[i].name;
+        	if(elementNames[idx].toString() == prevElement.toString()) {
+        		continue;
+        	}
+        	prevElement = elementNames[idx];
+        	idx++
+        } 
+
+        var testForm = getobj('test');
+
+        for(var i = 0; i < elementNames.length; i++) {
+        	if(testForm[elementNames[i]].type == "textarea") {
+        		if (testForm[elementNames[i]].value == "") {
+					errStr += elementNames[i]+"\n";
+        		}
+        	}
+        	else {
+        		if(getRadioValue(testForm[elementNames[i]]) == null) {
+					errStr += elementNames[i]+' multiple choice\n';
+        		}
+        	}
+        }
+
+		if(errStr != '') {
+			formError('Please complete all the fields and questions.\n\n'+errStr);
+			return false;
+		}
+		// to get here all questions need to be answered
+		
+		getobj('test').submit();
+    }
+	</script>
+	
+</head>
+<body>
+	<noscript>
+		<br />
+		<span style="color:#f00;font-size:20pt;">You need to have Javascript Enabled in your Browser to use this Site</span">
+		<br />
+	</noscript>
+	<div id="main">
+		<div id="container2">
+			<img src="images/topbanner.jpg" border="0" />
+			<div id="float" style='width:100%; text-align: right; position: fixed; float: right; top: 155px; left:0px;z-index:-2;border-style:solid;border-width: 0px;padding:2px;'>
+				<span style='color:black; font-family: Tahoma,Helvetica,Verdana; font-size: 18px;'>Time Remaining: </span>
+				<span id='countDownTimer' style='background-color:white; color:red; font-family: Tahoma,Helvetica,Verdana; font-size: 18px;'></span><span>&nbsp;&nbsp;</span>
+			</div>
+			<div id="contactloc" >
+				<p class="smalltext"><a class="emailcolor" href="mailto:info@qualcodeinc.com">info@qualcodeinc.com</a>&nbsp;&nbsp;&nbsp;&nbsp;212-368-6258</p>
+			</div>
+			<div id="mainbody4QC">
+				<div id="crheader">
+				<p class="header">ICD-9-CM Coding Questions</p><br />
+				<p class="bodycopyform">
+				Thank you for your interest in QualCode. As part of the evaluation process, we would like to you answer the following list of questions. After receiving your completed form, we will get back to you as soon as possible. <br /><br />
+				Please complete all items before submitting.<br />
+				</p>
+			</div>
+		<div id="formloc">
+		<form name="test" id="test" action="/cgi-bin/qctest.cgi" method="POST">
+		<input type=hidden name="startTime" value="<!--#include virtual='/cgi-bin/time.cgi' -->">
+		<table id="tablesize" align="left" border="0" cellspacing="8" >
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" colspan="1" rowspan="1" width="70px">Name:
+			</td>
+			<td align="left" colspan="6" rowspan="1" width="500px"><input type="text" id="fname" name="fname" tabindex="1" /></td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" colspan="1" rowspan="1" width="70px">Phone:
+			</td>
+			<td align="left" colspan="6" rowspan="1" width="500px"><input type="text" id="phone" name="phone" tabindex="2" /></td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" colspan="1" rowspan="1" width="70px">Email:
+			</td>
+			<td align="left" colspan="6" rowspan="1" width="500px"><input type="text" id="email" name="email" tabindex="3" /></td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+		
+		
+<!-- Section A -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"><b>A.</b></td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="500px">
+			<b>Specify code or codes which accurately describe the following diagnoses</b><br />
+			</td>
+		</tr>
+<!-- Question A1 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px">1.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="500px">
+			Hypertensive cardiovascular disease with compensated congestive heart failure:<br />
+				<textarea id="Q1" name="Q1" cols="33" tabindex="1" wrap="virtual"></textarea><br />
+			</td>
+		</tr>
+
+<!-- Question A2 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">2.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="500px">
+			Anemia, thrombocytopenia, neutropenia:<br />
+			<textarea id="Q2" name="Q2" cols="33" tabindex="2" wrap="virtual"></textarea><br />
+			</td>
+		</tr>
+		
+<!-- Question A3 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">3.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Rheumatic heart disease with congestive heart failure:<br />
+			<textarea id="Q3" name="Q3" cols="33" tabindex="3" wrap="virtual"></textarea><br />
+			</td>
+		</tr>
+		
+<!-- Question A4 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">4.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">Acute bronchitis, exacerbation of chronic obstructive pulmonary disease:<br />
+			<textarea id="Q4" name="Q4" cols="33" tabindex="4" wrap="virtual"></textarea><br />
+			</td>
+		</tr>
+		
+<!-- Question A5 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">5.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Hypertension, acute and chronic renal failure with tubular necrosis<br />
+				<textarea id="Q5" name="Q5" cols="33" tabindex="5" wrap="virtual"></textarea><br />
+			</td>
+		</tr>
+
+<!-- Question A6 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">6.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Aortic stenosis, rheumatic heart disease:<br />
+				<textarea id="Q6" name="Q6" cols="33" tabindex="6" wrap="virtual"></textarea><br />
+			</td>
+		</tr>
+
+<!-- Question A7 -->
+
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">7.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Candida urinary tract infection: <br />
+				<textarea id="Q7" name="Q7" cols="33" tabindex="7" wrap="virtual"></textarea><br />
+			</td>
+		</tr>
+
+<!-- Question A8 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">8.</td>
+			<td class="formtext" align="left" colspan="3" rowspan="1" width="100px">
+			Hyponatremia, syndrome of inappropriate antidiuretic hormone:<br />
+				<textarea id="Q8" name="Q8" cols="33" tabindex="8" wrap="virtual"></textarea>
+			</td>
+		</tr>
+
+<!-- Question A9 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">9.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Lymphoma with bone metastasis:<br />
+				<textarea id="Q9" name="Q9" cols="33" tabindex="9" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question A10 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">10.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Insulin-requiring diabetes mellitus:<br />
+				<textarea id="Q10" name="Q10" cols="33" tabindex="10" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question A11 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">11.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Failed skin graft:<br />
+				<textarea id="Q11" name="Q11" cols="33" tabindex="11" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+
+<!-- Question A12 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">12.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Dilantin toxicity (adverse reaction):<br />
+			<textarea id="Q12" name="Q12" cols="33" tabindex="12" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question A13 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">13.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Postoperative pulmonary edema with fluid overload:<br />
+			<textarea id="Q13" name="Q13" cols="33" tabindex="13" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question A14 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">14.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Acute non-q-wave myocardial infarction:<br />
+			<textarea id="Q14" name="Q14" cols="33" tabindex="14" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question A15 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">15.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Insulin dependent diabetic gastroenteropathy:<br />
+			<textarea id="Q15" name="Q15" cols="33" tabindex="15" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question A16 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">16.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Mitral and tricuspid valve insufficiency:<br />
+			<textarea id="Q16" name="Q16" cols="33" tabindex="16" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question A17 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">17.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Postpartum spinal headache:<br />
+			<textarea id="Q17" name="Q17" cols="33" tabindex="17" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+		<tr><td></td></tr>
+		<tr><td></td></tr>
+		<tr><td></td></tr>
+		<tr><td></td></tr>
+
+<!-- Section B -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"><b>B.</b></td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="500px">
+			<b>Specify code or codes which accurately describe the following procedures</b><br />
+			</td>
+		</tr>
+
+<!-- Question B1 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">1.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Low anterior resection of rectum with sigmoidectomy:<br />
+			<textarea id="QB1" name="QB1" cols="33" tabindex="18" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question B2 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">2.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Left cardiac cath with failed PTCA (unsuccessful) attempt at crossing the lesion in the blocked artery:<br />
+			<textarea id="QB2" name="QB2" cols="33" tabindex="19" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question B3 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">3.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Open coronary endarterectomy of the left anterior descending artery and a coronary artery bypass graft consisting of saphenous vein graft to the right coronary artery, left anterior descending artery and a free right internal mammary artery to the second obtuse marginal with cardiopulmonary bypass:<br />
+			<textarea id="QB3" name="QB3" cols="33" tabindex="20" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question B4 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">4.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Carpentier Edwards mitral valve replacement, cardiopulmonary bypass:<br />
+			<textarea id="QB4" name="QB4" cols="33" tabindex="21" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question B5 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">5.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Fiberoptic bronchoscopy with endobronchial biopsy:<br />
+			<textarea id="QB5" name="QB5" cols="33" tabindex="22" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question B6 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">6.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Two weeks prior to admission patient underwent a complete thyroidectomy and developed a postoperative hematoma and returns for evacuation hematoma:<br />
+			<textarea id="QB6" name="QB6" cols="33" tabindex="23" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question B7 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">7.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			MAZE procedure:<br />
+			<textarea id="QB7" name="QB7" cols="33" tabindex="24" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question B8 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">8.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Aorta iliac-femoral bypass graft:<br />
+			<textarea id="QB8" name="QB8" cols="33" tabindex="25" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B9 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">9.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient recently underwent a femoral bypass graft, developed post-op bleeding and returned to hospital for control of bleeding.  Findings revealed that the femoral artery had been lacerated and suture of the artery was performed:<br />
+			<textarea id="QB9" name="QB9" cols="33" tabindex="26" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B10 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">10.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Percutaneous transluminal angioplasty of renal artery with stent insertion:<br />
+			<textarea id="QB10" name="QB10" cols="33" tabindex="27" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B11 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">11.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Open cholecystectomy with a needle biopsy of pancreas:<br />
+			<textarea id="QB11" name="QB11" cols="33" tabindex="28" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B12 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">12.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Thorascopic wedge resection of the lung:<br />
+			<textarea id="QB12" name="QB12" cols="33" tabindex="29" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B13 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">13.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Thorascopic biopsy left upper lobe of lung with Percutaneous needle biopsy of right upper lobe:<br />
+			<textarea id="QB13" name="QB13" cols="33" tabindex="30" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B14 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">14.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Insertion of Dynaflex penile prosthesis:<br />
+			<textarea id="QB14" name="QB14" cols="33" tabindex="31" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B15 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">15.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Reanastomosis of fallopian tubes following tubal ligation:<br />
+			<textarea id="QB15" name="QB15" cols="33" tabindex="32" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B16 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">16.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient presented with decubitus ulcer of sacrum requiring debridement of skin and subcutaneous tissue, muscle and bone which resulted in a defect that required rotating flap graft.:<br />
+			<textarea id="QB16" name="QB16" cols="33" tabindex="33" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B17 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">17.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Endovascular endoluminal grafting for abdominal aortic aneury:<br />
+			<textarea id="QB17" name="QB17" cols="33" tabindex="34" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B18 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">18.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			TIPS procedure:<br />
+			<textarea id="QB18" name="QB18" cols="33" tabindex="35" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B19 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">19.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Right carotid artery endarterectomy with a patch angioplasty:<br />
+			<textarea id="QB19" name="QB19" cols="33" tabindex="36" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B20 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">20.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Laparoscopic Nissen fundoplication, Collis gastroplasty for treatment of gastroesophageal reflux disease:<br />
+			<textarea id="QB20" name="QB20" cols="33" tabindex="37" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B21 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">21.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Left hemicolectomy with small to large (end to end) anastomosis:<br />
+			<textarea id="QB21" name="QB21" cols="33" tabindex="38" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B22 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">22.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Declotting of an arteriovenous shunt for dialysis by angioplasty:<br />
+			<textarea id="QB22" name="QB22" cols="33" tabindex="39" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+<!-- Question B23 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">23.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Insertion intraperitoneal catheter for chemotherapy access:<br />
+			<textarea id="QB23" name="QB23" cols="33" tabindex="40" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		
+		<tr><td></td></tr>
+		<tr><td></td></tr>
+		<tr><td></td></tr>
+		<tr><td></td></tr>
+		
+<!-- Section C -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"><b>C.</b></td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="500px">
+			<b>Based on coding clinic guidelines and guidelines for the selection of principal diagnosis, specify code for the principal diagnosis in the following cases</b><br />
+			</td>
+		</tr>
+
+<!-- Question C1 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">1.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Suspected carcinoma of right lower lobe of lung.<br />
+			<textarea id="QC1" name="QC1" cols="33" tabindex="41" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		
+<!-- Question C2-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">2.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			2.	Respiratory failure secondary to congestive heart failure.<br />
+			<textarea id="QC2" name="QC2" cols="33" tabindex="42" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		
+<!-- Question C3-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">3.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Pneumonia in aspergillosis.<br />
+			<textarea id="QC3" name="QC3" cols="33" tabindex="43" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		
+<!-- Question C4-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">4.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Acute bronchitis with exacerbation COPD.<br />
+			<textarea id="QC4" name="QC4" cols="33" tabindex="44" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C5-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">5.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Arthritis of the hip secondary to fracture neck of femur, three years earlier.<br />
+			<textarea id="QC5" name="QC5" cols="33" tabindex="45" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		
+<!-- Question C6-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">6.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Curvature of the spine, late effect of rickets.<br />
+			<textarea id="QC6" name="QC6" cols="33" tabindex="46" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		
+<!-- Question C7-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">7.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Chest pain due to either angina or esophageal spasm.<br />
+			<textarea id="QC7" name="QC7" cols="33" tabindex="47" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		
+<!-- Question C8-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">8.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Second-degree burn of hand with third degree burn of arm.<br />
+			<textarea id="QC8" name="QC8" cols="33" tabindex="48" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C9-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">9.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Intractable bone pain secondary to metastatic lung cancer to bone.<br />
+			<textarea id="QC9" name="QC9" cols="33" tabindex="49" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		
+<!-- Question C10-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">10.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient was discharged after undergoing a coronary artery bypass graft.  Two days following discharge, patient developed a hematoma at the site of vein harvesting and was readmitted.<br />
+			<textarea id="QC10" name="QC10" cols="33" tabindex="50" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C11-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">11.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient is admitted to the hospital with acute onset of fever. All laboratory tests, including chest x-ray and cultures, are negative. The physician states the diagnosis to be fever of undetermined etiology, probably infectious.<br />
+			<textarea id="QC11" name="QC11" cols="33" tabindex="51" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		
+<!-- Question C12-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">12.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient is admitted with unstable angina and a known history of coronary artery disease.  Patient is given Nitroglycerine and pain is relieved.  Prior cardiac cath showed a blockage of the SVG to left anterior descending artery graft.<br />
+			<textarea id="QC12" name="QC12" cols="33" tabindex="52" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C13-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">13.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient is admitted with impending fracture of spine secondary to metastasis of spine. X-ray did not reveal a fracture.<br />
+			<textarea id="QC13" name="QC13" cols="33" tabindex="53" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C14-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">14.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Bleeding esophageal varices with cirrhosis of liver.<br />
+			<textarea id="QC14" name="QC14" cols="33" tabindex="54" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C15-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">15.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient is admitted with shortness of breath, high fever and chills with a 20-pound weight loss.  Chest x-ray reveals bilateral infiltrates and HIV serology is positive. A diagnosis of pneumocystis carinii pneumonia is made.<br />
+			<textarea id="QC15" name="QC15" cols="33" tabindex="55" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C16-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">16.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient is admitted with dehydration after taking her Digoxin. Patient accidentally took two times the amount she was supposed to take.<br />
+			<textarea id="QC16" name="QC16" cols="33" tabindex="56" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C17-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">17.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient was admitted to hospital “A” with acute renal failure.  After study, it was determined that the patient would require hemodialysis.  Hospital “A” does not provide hemodialysis.  Therefore, when stabilized the patient was transferred to hospital “B” and admitted for renal dialysis.  What is the principal diagnosis for hospital “A”? What is the principal diagnosis for hospital “B”?<br />
+			<textarea id="QC17" name="QC17" cols="33" tabindex="57" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C18-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">18.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient presented to the hospital with breech presentation with obstructed labor.  She delivered by cesarean section hours later.<br />
+			<textarea id="QC18" name="QC18" cols="33" tabindex="58" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C19-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">19.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient presents with chest pain after seeing her granddaughter get hit by a truck and died at the scene.  Patient’s history is strong for coronary artery disease, myocardial infarction with history of coronary bypass and recent blockage of grafts.  She is maintained on Nitro daily. Serial enzymes were negative X-3 and patient responded to treatment of IV Nitro.<br />
+			<textarea id="QC19" name="QC19" cols="33" tabindex="59" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+<!-- Question C20-->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">20.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient is admitted with chief compliant of nausea, fever, and lethargy. Blood and urine cultures revealed presence of pseudomonas. The physician states urosepsis and patient is treated with IC broad-spectrum antibiotics.<br />
+			<textarea id="QC20" name="QC20" cols="33" tabindex="60" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+
+			<tr><td></td></tr>
+			<tr><td></td></tr>
+			<tr><td></td></tr>
+			<tr>
+				<td align="left" colspan="3" rowspan="1" width="300px">
+				<input type="button" value="Submit" onClick="javascript:realSubmit();" />
+			</td>
+			<td align="left" colspan="3" rowspan="1" width="300px">
+				<input type="reset" name="reset" />
+			</td>
+		</tr>
+		</table>
+		<input id=timedOut type=hidden name=timedOut value=0>
+		<input id=eTime type=hidden name=eTime value="">
+		</form>
+				</div> <!-- Close "formloc" div tag -->
+				<div id="botloccareers" style="background-color: #ddd;">
+				<img src="images/bottombanner.jpg" border="0" /><br />	
+				<p id="copyloc" class="smalltext"> &copy; 2011 QualCode, Inc.&nbsp;&nbsp;|&nbsp;&nbsp;<a class="emailcolor" href="mailto:info@qualcodeinc.com">Email Us</a>&nbsp;&nbsp;|&nbsp;&nbsp;212-368-6258</p>
+			</div> <!-- Close "botloccareers" div tag -->
+			</div> <!-- Close mainbody -->
+		</div><!-- Close "container" div tag -->
+	</div>  <!-- Close "main" div tag -->
+	<img id="holder1" src="images/blank.jpg" style="display: none; width: 0px; height: 0px;">
+</body>
+<script type="text/javascript">
+	//
+	// Countdown Timer Starts Here
+	//
+	dtobj = new Date();
+	endTime = dtobj.getTime();
+	hours3 = 10800000;
+	//hours3 = 100000;
+	endTime += hours3;
+	TargetDate = new Date(endTime);
+
+//TargetDate = "06/17/2011 2:00 PM";
+	BackColor = "white";
+	ForeColor = "red";
+	CountActive = true;
+	CountStepper = -1;
+	LeadingZero = true;
+	DisplayFormat = "%%H%%:%%M%%:%%S%%";
+	FinishMessage = "Your time is up!";
+
+	function calcage(secs, num1, num2) {
+  		s = ((Math.floor(secs/num1))%num2).toString();
+  		if (LeadingZero && s.length < 2)
+    		s = "0" + s;
+  		return "<b>" + s + "</b>";
+	}
+
+	function CountBack(secs) {
+  		if (secs < 0) {
+    		getobj("countDownTimer").innerHTML = FinishMessage;
+    		getobj("timedOut").value=1;
+    		getobj('test').submit();
+    		return;
+  		}
+  		DisplayStr = DisplayFormat.replace(/%%D%%/g, calcage(secs,86400,100000));
+  		DisplayStr = DisplayStr.replace(/%%H%%/g, calcage(secs,3600,24));
+  		DisplayStr = DisplayStr.replace(/%%M%%/g, calcage(secs,60,60));
+  		DisplayStr = DisplayStr.replace(/%%S%%/g, calcage(secs,1,60));
+
+  		getobj("countDownTimer").innerHTML = DisplayStr;
+  		if (CountActive)
+    		setTimeout("CountBack(" + (secs+CountStepper) + ")", SetTimeOutPeriod);
+	}
+
+	function putspan(backcolor, forecolor) {
+ 		//document.write("<span id='cntdwn' style='background-color:" + backcolor + 
+        //        "; color:" + forecolor + ";font-family: Tahoma,Helvetica,Verdana; font-size: 18px;'></span>");
+	}
+	
+	function getQueryStr(key, default_)
+	{
+ 		if (default_==null) default_="";
+  		key = key.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  		var regex = new RegExp("[\\?&]"+key+"=([^&#]*)");
+  		var qs = regex.exec(window.location.href);
+  		if(qs == null)
+    		return default_;
+  		else
+    		return qs[1];
+	}
+	
+	if (typeof(BackColor)=="undefined")
+  		BackColor = "white";
+	if (typeof(ForeColor)=="undefined")
+  		ForeColor= "black";
+	if (typeof(TargetDate)=="undefined")
+  		TargetDate = "12/31/2020 5:00 AM";
+	if (typeof(DisplayFormat)=="undefined")
+  		DisplayFormat = "%%D%% Days, %%H%% Hours, %%M%% Minutes, %%S%% Seconds.";
+	if (typeof(CountActive)=="undefined")
+  		CountActive = true;
+	if (typeof(FinishMessage)=="undefined")
+  		FinishMessage = "";
+	if (typeof(CountStepper)!="number")
+  		CountStepper = -1;
+	if (typeof(LeadingZero)=="undefined")
+  		LeadingZero = true;
+
+
+	CountStepper = Math.ceil(CountStepper);
+	if (CountStepper == 0)
+  		CountActive = false;
+		var SetTimeOutPeriod = (Math.abs(CountStepper)-1)*1000 + 990;
+		//putspan(BackColor, ForeColor);
+		var dthen = new Date(TargetDate);
+		var dnow = new Date();
+		if(CountStepper>0)
+  			ddiff = new Date(dnow-dthen);
+	else
+  		ddiff = new Date(dthen-dnow);
+	gsecs = Math.floor(ddiff.valueOf()/1000);
+	eTime = getQueryStr('eTime','');
+	if (eTime != '') {
+		getobj('eTime').value = eTime;
+	}
+	CountBack(gsecs);
+
+</script>
+</html>

@@ -1,0 +1,768 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+	<title>Coding Support and Management</title>
+	<meta name="generator" content="BBEdit 8.7" />
+	<meta name="keywords" content="coding">
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
+	<link rel="stylesheet" type="text/css" href="qcstylesnew2.css" media="screen, projection" />
+	<style type="text/css" media="print">
+		BODY {display:none;visibility:hidden;}
+	</style>
+	<!--<script src="floater.js" type="text/javascript"></script>-->
+	<script type="text/javascript">
+	// Global VARS
+	//
+    var windim = new Array(2);
+    var browser;
+	var validated = true;
+	
+    var jsonobj = {
+        ajaxRequest : function() {
+            var activexmodes=["Msxml2.XMLHTTP", "Microsoft.XMLHTTP"];
+            if (window.ActiveXObject){
+                for (var i=0; i<activexmodes.length; i++) {
+                    try {
+                        return new ActiveXObject(activexmodes[i])
+                    }
+                    catch(e) {
+                    // if not IE then just supress any errors and ignore it
+                    }
+                }
+            }
+            else if (window.XMLHttpRequest) 
+                return new XMLHttpRequest()
+            else
+                return false;
+            },
+            getobj : function(url) {
+                var req = new this.ajaxRequest();
+                var jsonurl = url;
+                req.open("GET", jsonurl, false);
+                req.send("");
+                //return(eval('('+req.responseText+')'));
+                return(req.responseText);
+            }
+    }
+    
+    function getBrowserStr() {
+        return (navigator.userAgent.toLowerCase());
+    }
+
+ 	function getobj(o){
+
+	    if (document.getElementById)
+	        return document.getElementById(o)
+	    else if (document.all)
+	        return document.all.o
+	}
+            
+	function truebody(){
+	  return (!window.opera && document.compatMode && document.compatMode!="BackCompat")? document.documentElement : 	document.body
+	}
+
+    function getwinsize() {
+        
+        if( typeof( window.innerWidth ) == 'number' ) {
+            //Non-IE
+            windim[0] = window.innerWidth;
+            windim[1] = window.innerHeight;
+        } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+            //IE 6+ in 'standards compliant mode'
+            windim[0] = document.documentElement.clientWidth;
+            windim[1] = document.documentElement.clientHeight;
+        } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+            //IE 4 compatible
+            windim[0] = document.body.clientWidth;
+            windim[1] = document.body.clientHeight;
+        }
+    }
+
+    function checkValue(o) {
+        if(o.value != null && o.value != "") {
+			return true;
+        }
+        else {
+			return false;
+        }
+    }
+
+	function checkEmail(e) 
+	{
+		var filter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/;
+		if (!filter.test(e.value)) {
+			e.focus;
+			return false;
+		}
+		return true;
+	}
+	
+    function runit() {
+        window.onresize=function () {
+            getwinsize();
+        }
+        browser = getBrowserStr();        
+    }
+    
+    function getRadioValue(rb) {
+		for (var i = 0; i < rb.length; i++) {
+			if (rb[i].checked) {
+				return rb[i].value;
+			}
+		}
+		return null;
+	}
+
+  	function formError(m) {
+		alert(m);
+	}
+
+    function realSubmit() 
+    {
+      	var idx = 0;
+        var prevElement = "";
+        var elementNames = new Array();
+        var elem = getobj('test').elements;
+
+        var errStr = '';
+
+		if (!checkValue(getobj('fname')) || !checkValue(getobj('phone')))  {
+			errStr += 'Name and Phone Number\n';
+		}
+		if (!checkEmail(getobj('email'))) {
+			errStr += 'Valid Email Address\n';
+		}
+		
+        for(var i = 0; i < elem.length; i++)
+        {
+        	if(!elem[i].name.match(/^Q/)) continue;
+        	elementNames[idx] = elem[i].name;
+        	if(elementNames[idx].toString() == prevElement.toString()) {
+        		continue;
+        	}
+        	prevElement = elementNames[idx];
+        	idx++
+        } 
+
+        var testForm = getobj('test');
+
+        for(var i = 0; i < elementNames.length; i++) {
+        	if(testForm[elementNames[i]].type == "textarea") {
+        		if (testForm[elementNames[i]].value == "") {
+					errStr += elementNames[i]+"\n";
+        		}
+        	}
+        	else {
+        		if(getRadioValue(testForm[elementNames[i]]) == null) {
+					errStr += elementNames[i]+' multiple choice\n';
+        		}
+        	}
+        }
+
+		if(errStr != '') {
+			formError('Please complete all the fields and questions.\n\n'+errStr);
+			return false;
+		}
+		// to get here all questions need to be answered
+		
+		getobj('test').submit();
+    }
+	</script>
+	
+</head>
+<body>
+	<noscript>
+		<br />
+		<span style="color:#f00;font-size:20pt;">You need to have Javascript Enabled in your Browser to use this Site</span">
+		<br />
+	</noscript>
+	<div id="main">
+		<div id="container2">
+			<img src="images/topbanner.jpg" border="0" />
+			<div id="float" style='width:100%; text-align: right; position: fixed; float: right; top: 155px; left:0px;z-index:-2;border-style:solid;border-width: 0px;padding:2px;'>
+				<span style='color:black; font-family: Tahoma,Helvetica,Verdana; font-size: 18px;'>Time Remaining: </span>
+				<span id='countDownTimer' style='background-color:white; color:red; font-family: Tahoma,Helvetica,Verdana; font-size: 18px;'></span><span>&nbsp;&nbsp;</span>
+			</div>
+			<div id="contactloc" >
+				<p class="smalltext"><a class="emailcolor" href="mailto:info@qualcodeinc.com">info@qualcodeinc.com</a>&nbsp;&nbsp;&nbsp;&nbsp;212-368-6258</p>
+			</div>
+			<div id="mainbody4QC">
+				<div id="crheader">
+				<p class="header">Evaluation Form</p><br />
+				<p class="bodycopyform">
+				Thank you for your interest in QualCode. As part of the evaluation process, we would like to you answer the following list of questions. After receiving your completed form, we will get back to you as soon as possible. <br /><br />
+				Please complete all items before submitting.<br />
+				</p>
+			</div>
+		<div id="formloc">
+		<form name="test" id="test" action="/cgi-bin/qctest.cgi" method="POST">
+		<input type=hidden name="startTime" value="<!--#include virtual='/cgi-bin/time.cgi' -->">
+		<table id="tablesize" align="left" border="0" cellspacing="8" >
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" colspan="1" rowspan="1" width="70px">Name:
+			</td>
+			<td align="left" colspan="6" rowspan="1" width="500px"><input type="text" id="fname" name="fname" tabindex="1" /></td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" colspan="1" rowspan="1" width="70px">Phone:
+			</td>
+			<td align="left" colspan="6" rowspan="1" width="500px"><input type="text" id="phone" name="phone" tabindex="2" /></td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" colspan="1" rowspan="1" width="70px">Email:
+			</td>
+			<td align="left" colspan="6" rowspan="1" width="500px"><input type="text" id="email" name="email" tabindex="3" /></td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+		
+		
+<!-- Question 1 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px">1.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="500px">
+			Uncontrolled secondary diabetes mellitus with snowflake cataract:<br />
+				<textarea id="Q1" name="Q1" cols="33" tabindex="4" wrap="virtual"></textarea><br />
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 2 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">2.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="500px">
+			Which of the following consults are no longer recognized by the E/M guidelines? <br />
+			<label class="formtext"><input type="radio" id="Q2a" name="Q2"  value="a" />&nbsp;a. Inpatient consults</label> <br />
+			<label class="formtext"><input type="radio" id="Q2b" name="Q2"  value="b"/>&nbsp;b. Outpatient consults</label>	<br />
+			<label class="formtext"><input type="radio" id="Q2c" name="Q2"  value="c"/>&nbsp;c. Confirmatory consults</label><br />
+			<label class="formtext"><input type="radio" id="Q2d" name="Q2"  value="d"/>&nbsp;d. None of the above</label>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+		
+<!-- Question 3 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">3.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			What is the level of history assigned to level three (99213) office visits?<br />
+			<label class="formtext"><input type="radio" id="Q3a" name="Q3"  value="a" />&nbsp;a. Problem focused</label> <br />
+			<label class="formtext"><input type="radio" id="Q3b" name="Q3"  value="b"/>&nbsp;b. Expanded problem focused</label>	<br />
+			<label class="formtext"><input type="radio" id="Q3c" name="Q3"  value="c"/>&nbsp;c. Detailed</label><br />
+			<label class="formtext"><input type="radio" id="Q3d" name="Q3"  value="d"/>&nbsp;d. Comprehensive</label><br />
+			<label class="formtext"><input type="radio" id="Q3e" name="Q3"  value="d"/>&nbsp;e. None of the above</label>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+		
+<!-- Question 4 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">4.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">Dr. Water&rsquo;s saw Mrs. Manning, for an annual physical. Dr. Water&rsquo;s took Mrs. Manning&rsquo;s history and performed an examination. During the course of the examination Dr. Water&rsquo;s discovered a significant problem that required additional history, a more extensive examination that he had to write Mrs. Manning a prescription for.<br /><br />
+			Should the entire encounter be coded as:<br />
+			<label class="formtext"><input type="radio" id="Q4a" name="Q4" value="a" />&nbsp;a. office visit (99201 &mdash; 99215)</label> <br />
+			<label class="formtext"><input type="radio" id="Q4b" name="Q4"  value="b"/>&nbsp;b. preventive medicine service (99381 &mdash; 99397)</label>	<br />
+			<label class="formtext"><input type="radio" id="Q4c" name="Q4"  value="c"/>&nbsp;c. both</label><br />
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+		
+<!-- Question 5 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">5.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Burns over 38% of the body with 10% of the body involved in 3rd degree burns and 28% involved in 2nd degree burns.<br />
+				<textarea id="Q5" name="Q5" cols="33" tabindex="5" wrap="virtual"></textarea><br />
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 6 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">6.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			When coding an E/M service based solely on time:<br />
+			<label class="formtext"><input type="radio" id="Q6a" name="Q6"  value="a" />&nbsp;a. You must spend the entire allotted time for that level of care face-to-face with the patient or on the ward taking care of patient business</label> <br />
+			<label class="formtext"><input type="radio" id="Q6b" name="Q6"  value="b"/>&nbsp;b. Over half of the time spent must have been devoted to counseling and/or coordination of care</label>	<br />
+			<label class="formtext"><input type="radio" id="Q6c" name="Q6"  value="c"/>&nbsp;c. You must document the time spent as well as the nature of the counseling and/or 
+     coordination of care</label><br />
+			<label class="formtext"><input type="radio" id="Q6d" name="Q6"  value="d"/>&nbsp;d. All of the above</label><br />
+			<label class="formtext"><input type="radio" id="Q6e" name="Q6"  value="d"/>&nbsp;e. None of the above</label>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 7 -->
+
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">7.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Mrs. Boykin saw Dr. Paul in his office in January 1996. In March 2001, Mrs. Boykin called Dr. Paul&rsquo;s office with a minor problem.  Mrs. Boykin discussed the problem with Dr. Mayo&rsquo;s nurse, who in turn, discussed the problem with Dr. Paul. Dr. Paul, called in a prescription for Mrs. Boykin. In August 2001, Dr. Paul saw Mrs. Boykin in the office.  Dr. Paul took Mrs. Boykin&rsquo;s history, performed an examination and wrote a new prescription. <br /><br />
+			Should this encounter be coded as: <br />
+			<label class="formtext"><input type="radio" id="Q7a" name="Q7"  value="a" />&nbsp;a. new patient office visit (99201 &mdash; 99205)</label> <br />
+			<label class="formtext"><input type="radio" id="Q7b" name="Q7"  value="b"/>&nbsp;b. established patient office visit (99211 &mdash; 99215) </label>	<br />
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 8 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">8.</td>
+			<td class="formtext" align="left" colspan="3" rowspan="1" width="100px">
+			What does NCCI stand for? <br />
+				<textarea id="Q8" name="Q8" cols="33" tabindex="6" wrap="virtual"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 9 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">9.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Using NCCI, what does the below mean?<br />
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" valign="top" colspan="1" rowspan="1" width="30px">a.	0 &mdash; </td>
+			<td align="left" colspan="2" rowspan="1" width="100px">
+				<textarea id="Q9A" name="Q9A" cols="33" tabindex="7" wrap="virtual"></textarea>
+			</td>
+		</tr>
+
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" valign="top" colspan="1" rowspan="1" width="30px">b.	1 &mdash; </td>
+			<td align="left" colspan="2" rowspan="1" width="100px">
+				<textarea id="Q9B" name="Q9B" cols="33" tabindex="8" wrap="virtual"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" valign="top" colspan="1" rowspan="1" width="30px">c.	9 &mdash; </td>
+			<td align="left" colspan="2" rowspan="1" width="100px">
+				<textarea id="Q9C" name="Q9C" cols="33" tabindex="9" wrap="virtual"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 10 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">10.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			What is the code for CBC with differential WBC?<br />
+				<textarea id="Q10" name="Q10" cols="33" tabindex="10" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 11 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">11.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+				Patient:  	Sam Jones<br />
+				DOB: 04/15/63<br />
+				MRN #: 87654321<br />
+
+				EXAM:  CHEST SINGLE AP OR PA     	PROCEDURE DATE:  12/28/07   <br />                                                       
+				EXAM:  RIBS BILATERAL (3 VIEWS) 	PROCEDURE DATE:  12/28/07  <br />
+                                                                                
+				CLINICAL HISTORY:  Fall off ladder at home &mdash; Chest Pain    <br />                                                         
+
+				FINDINGS:               <br />                                                  
+				There are acute fractures of the left third through eighth posterior ribs.     <br />                                                      
+				The heart and lungs are normal.             <br />                             
+
+				IMPRESSION:  Fractures of the 3rd through 8th posterior ribs.<br />
+
+				List codes for all radiological procedure, modifier and diagnosis, if applicable for services rendered.<br />
+ 			</td>
+		</tr>
+
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" valign="top" colspan="1" rowspan="1" width="30px">CPT:</td>
+			<td align="left" colspan="2" rowspan="1" width="100px">
+				<textarea id="Q11CPT" name="Q11CPT" cols="33" tabindex="11" wrap="virtual"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" valign="top" colspan="1" rowspan="1" width="30px">DX:</td>
+			<td align="left" colspan="2" rowspan="1" width="100px">
+				<textarea id="Q11DX" name="Q11DX" cols="33" tabindex="12" wrap="virtual"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 12 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">12.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			A Patient who has cancer that has spread to the brain presents for treatment of the brain cancer.  <br />
+			<textarea id="Q12" name="Q12" cols="33" tabindex="13" wrap="virtual"></textarea>
+
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 13 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">13.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Patient:		John Baker<br />
+			DOB:		04/01/08<br />
+			MRN:		7484940<br />
+
+			HISTORY:	Breech Birth &mdash; Pain in both hips<br />
+
+			EXAM:		Pelvis and hips, infant or child &mdash; two views<br />
+			DOS:		08/01/08<br />
+
+			Exam of pelvis and hips reveal no fractures or mal formations.<br />
+
+			List codes for all radiological procedure, modifier and diagnosis, if applicable for services rendered.<br />
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" valign="top" colspan="1" rowspan="1" width="30px">CPT:</td>
+			<td align="left" colspan="2" rowspan="1" width="100px">
+				<textarea id="Q13CPT" name="Q13CPT" cols="33" tabindex="14" wrap="virtual"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" valign="top" colspan="1" rowspan="1" width="30px">DX:</td>
+			<td align="left" colspan="2" rowspan="1" width="100px">
+				<textarea id="Q13DX" name="Q13DX" cols="33" tabindex="15" wrap="virtual"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 14 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">14.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			A physician applied a cast and also provided all of the subsequent fracture care. The same physician may report the application of the cast separately from the fracture care.<br />
+			<label class="formtext"><input type="radio" id="Q14a" name="Q14" value="true" />&nbsp;a. True</label> <br />
+			<label class="formtext"><input type="radio" id="Q14b" name="Q14"  value="false"/>&nbsp;b. False</label>	<br />
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 15 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">15.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			What modifier should be used for an incomplete colonoscopy when the patient was
+			prepared for a full colonoscopy?<br />
+			<textarea id="Q15" name="Q15" cols="33" tabindex="16" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 16 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">16.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			A patient presents for an incision and drainage of a pilonidal cyst. <br /><br />
+			What is the correct code for these services?<br />
+			<textarea id="Q16" name="Q16" cols="33" tabindex="17" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 17 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">17.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Judy noticed swelling in both her hips. She is referred to Dr. Roy, an orthopedic surgeon, who performs a fasciotomy on both hips. Prior to surgery, Dr. Roy obtains the patient&rsquo;s permission to have a resident observe the surgery. <br /><br />
+			What is the correct code for Dr. Roy&rsquo;s services? <br />
+			<textarea id="Q17" name="Q17" cols="33" tabindex="18" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 18 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">18.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Dr. Hernandez preformed an arthrography injection of the temporomandibular joint (TMJ). He also completed the radiological supervision and interpretation for this procedure. The procedure was completed in a hospital. <br /><br />
+			What code(s) correctly capture Dr. Hernandez&rsquo;s services?<br />
+			<textarea id="Q18" name="Q18" cols="33" tabindex="19" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 19 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">19.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			Mrs. Jones is pregnant with twins, no prior pregnancy. She has been with the same obstetrician, Dr. Green, for her entire pregnancy. Now, Mrs. Jones is ready to deliver. Dr. Green helps Mrs. Jones deliver her twins vaginally. <br /><br />
+			What are the correct codes for these services?<br />
+			<textarea id="Q19" name="Q19" cols="33" tabindex="20" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 20 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">20.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			A confirmed diagnosis established in the pathologist&rsquo;s interpretation of the specimen has priority over the sign or symptom for which the test is ordered.<br />
+			<label class="formtext"><input type="radio" id="Q20a" name="Q20"  value="true" tabindex="21" />&nbsp;a. True</label> <br />
+			<label class="formtext"><input type="radio" id="Q20b" name="Q20"  value="false"/>&nbsp;b. False</label>	<br />
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 21 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">21.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			If a diagnostic test is performed and the physician&rsquo;s practice does not own the equipment but they perform the professional service, which modifier would you use?<br />
+			<textarea id="Q21" name="Q21" cols="33" tabindex="22" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 22 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">22.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			A patient injured his ankle and went to his physician who performed an E/M revealing a fractured ankle. The physician advised the patient that he needed immediate surgery on his ankle. The physician scheduled the surgery for the next morning. <br /><br />
+			Which modifier would you use on the E/M?<br />
+			<textarea id="Q22" name="Q22" cols="33" tabindex="23" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 23 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">23.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			A patient had knee surgery on January 3, 2010 with Dr. Conner&rsquo;s an Orthopedic Surgeon. The same patient injured his left wrist on February 19, 2010.  The patient went to see Dr. Conner&rsquo;s on February 20, 2010, and the physician evaluated the patient then ordered an x-ray of the left arm including the wrist.  The x-ray revealed a fractured wrist.  <br /><br />
+			Which modifier would you use on the E/M?<br />
+			<textarea id="Q23" name="Q23" cols="33" tabindex="24" wrap="virtual"></textarea>
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 24 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">24.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			A woman with no symptoms is referred to the hospital outpatient radiology department for screening mammogram. The patient is considered high risk for breast cancer secondary to family history of breast malignancy in her mother and sister. <br /><br />
+
+			How should the diagnoses for this case be coded?<br />
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" valign="top" colspan="1" rowspan="1" width="30px">DX:</td>
+			<td align="left" colspan="2" rowspan="1" width="100px">
+				<textarea id="Q24DX" name="Q24DX" cols="33" tabindex="25" wrap="virtual"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+		</tr>
+
+<!-- Question 25 -->
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="10px">25.</td>
+			<td class="formtext" align="left" colspan="6" rowspan="1" width="100px">
+			A patient came in for a bone marrow biopsy. The patient was sterilized by standard procedure. Bone marrow core biopsies were obtained from the left posterior iliac crest with minimal discomfort.  At the end of the procedure, the patient denied discomfort, without evidence of complications.  The patient has diffuse, malignant lymphoma.  Assign the ICD-9 and CPT codes for the physician services only.<br /><br />
+ 			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" valign="top" colspan="1" rowspan="1" width="30px">CPT:</td>
+			<td align="left" colspan="2" rowspan="1" width="100px">
+				<textarea id="Q25CPT" name="Q25CPT" cols="33" tabindex="26" wrap="virtual"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="formtext" align="left" valign="top" colspan="2" rowspan="1" width="20px"></td>
+			<td class="formtext" align="left" valign="top" colspan="1" rowspan="1" width="30px">DX:</td>
+			<td align="left" colspan="2" rowspan="1" width="100px">
+				<textarea id="Q25DX" name="Q25DX" cols="33" tabindex="27" wrap="virtual"></textarea>
+			</td>
+		</tr>
+			<tr><td></td></tr>
+			<tr><td></td></tr>
+			<tr><td></td></tr>
+			<tr>
+				<td align="left" colspan="3" rowspan="1" width="300px">
+				<input type="button" value="Submit" onClick="javascript:realSubmit();" />
+			</td>
+			<td align="left" colspan="3" rowspan="1" width="300px">
+				<input type="reset" name="reset" />
+			</td>
+		</tr>
+		</table>
+		<input id=timedOut type=hidden name=timedOut value=0>
+		<input id=eTime type=hidden name=eTime value="">
+		</form>
+				</div> <!-- Close "formloc" div tag -->
+				<div id="botloccareers" style="background-color: #ddd;">
+				<img src="images/bottombanner.jpg" border="0" /><br />	
+				<p id="copyloc" class="smalltext"> &copy; 2011 QualCode, Inc.&nbsp;&nbsp;|&nbsp;&nbsp;<a class="emailcolor" href="mailto:info@qualcodeinc.com">Email Us</a>&nbsp;&nbsp;|&nbsp;&nbsp;212-368-6258</p>
+			</div> <!-- Close "botloccareers" div tag -->
+			</div> <!-- Close mainbody -->
+		</div><!-- Close "container" div tag -->
+	</div>  <!-- Close "main" div tag -->
+	<img id="holder1" src="images/blank.jpg" style="display: none; width: 0px; height: 0px;">
+</body>
+<script type="text/javascript">
+	//
+	// Countdown Timer Starts Here
+	//
+	dtobj = new Date();
+	endTime = dtobj.getTime();
+	hours3 = 10800000;
+	//hours3 = 100000;
+	endTime += hours3;
+	TargetDate = new Date(endTime);
+
+//TargetDate = "06/17/2011 2:00 PM";
+	BackColor = "white";
+	ForeColor = "red";
+	CountActive = true;
+	CountStepper = -1;
+	LeadingZero = true;
+	DisplayFormat = "%%H%%:%%M%%:%%S%%";
+	FinishMessage = "Your time is up!";
+
+	function calcage(secs, num1, num2) {
+  		s = ((Math.floor(secs/num1))%num2).toString();
+  		if (LeadingZero && s.length < 2)
+    		s = "0" + s;
+  		return "<b>" + s + "</b>";
+	}
+
+	function CountBack(secs) {
+  		if (secs < 0) {
+    		getobj("countDownTimer").innerHTML = FinishMessage;
+    		getobj("timedOut").value=1;
+    		getobj('test').submit();
+    		return;
+  		}
+  		DisplayStr = DisplayFormat.replace(/%%D%%/g, calcage(secs,86400,100000));
+  		DisplayStr = DisplayStr.replace(/%%H%%/g, calcage(secs,3600,24));
+  		DisplayStr = DisplayStr.replace(/%%M%%/g, calcage(secs,60,60));
+  		DisplayStr = DisplayStr.replace(/%%S%%/g, calcage(secs,1,60));
+
+  		getobj("countDownTimer").innerHTML = DisplayStr;
+  		if (CountActive)
+    		setTimeout("CountBack(" + (secs+CountStepper) + ")", SetTimeOutPeriod);
+	}
+
+	function putspan(backcolor, forecolor) {
+ 		//document.write("<span id='cntdwn' style='background-color:" + backcolor + 
+        //        "; color:" + forecolor + ";font-family: Tahoma,Helvetica,Verdana; font-size: 18px;'></span>");
+	}
+	
+	function getQueryStr(key, default_)
+	{
+ 		if (default_==null) default_="";
+  		key = key.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  		var regex = new RegExp("[\\?&]"+key+"=([^&#]*)");
+  		var qs = regex.exec(window.location.href);
+  		if(qs == null)
+    		return default_;
+  		else
+    		return qs[1];
+	}
+	
+	if (typeof(BackColor)=="undefined")
+  		BackColor = "white";
+	if (typeof(ForeColor)=="undefined")
+  		ForeColor= "black";
+	if (typeof(TargetDate)=="undefined")
+  		TargetDate = "12/31/2020 5:00 AM";
+	if (typeof(DisplayFormat)=="undefined")
+  		DisplayFormat = "%%D%% Days, %%H%% Hours, %%M%% Minutes, %%S%% Seconds.";
+	if (typeof(CountActive)=="undefined")
+  		CountActive = true;
+	if (typeof(FinishMessage)=="undefined")
+  		FinishMessage = "";
+	if (typeof(CountStepper)!="number")
+  		CountStepper = -1;
+	if (typeof(LeadingZero)=="undefined")
+  		LeadingZero = true;
+
+
+	CountStepper = Math.ceil(CountStepper);
+	if (CountStepper == 0)
+  		CountActive = false;
+		var SetTimeOutPeriod = (Math.abs(CountStepper)-1)*1000 + 990;
+		//putspan(BackColor, ForeColor);
+		var dthen = new Date(TargetDate);
+		var dnow = new Date();
+		if(CountStepper>0)
+  			ddiff = new Date(dnow-dthen);
+	else
+  		ddiff = new Date(dthen-dnow);
+	gsecs = Math.floor(ddiff.valueOf()/1000);
+	eTime = getQueryStr('eTime','');
+	if (eTime != '') {
+		getobj('eTime').value = eTime;
+	}
+	CountBack(gsecs);
+
+</script>
+</html>
